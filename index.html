@@ -9,9 +9,12 @@
         
         <div class="card">
             <div class="search">
-                <input type="text" placeholder="enter city name" 
+                <input type="text" placeholder="Syötä kaupunki" 
                 spellcheck="false">
                 <button><img src="images/search.png"></button>
+            </div>
+            <div class="error">
+                <p>Virheellinen kaupungin nimi</p>
             </div>
             <div class="weather">
                 <img src="images/rain.png" class="weather-icon">
@@ -22,14 +25,14 @@
                         <img src="images/humidity.png">
                         <div>
                             <p class="humidity">50%</p>
-                            <p>Humidity</p>
+                            <p>Kosteus</p>
                         </div>
                     </div>
                     <div class="col">
                         <img src="images/wind.png">
                         <div>
                             <p class="wind">15 km/h</p>
-                            <p>Wind Speed</p>
+                            <p>Tuuli</p>
                         </div>
                     </div>
                 </div>
@@ -43,13 +46,16 @@ const apiUrl = "https://api.openweathermap.org/data/2.5/weather?&units=metric&q=
 
 const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
-const weatherIcon = document.querySelector("weather-icon")
+const weatherIcon = document.querySelector(".weather-icon")
 
 async function checkWeather(city) {
     const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
-    var data = await response.json();
 
-    console.log(data);
+    if(response.status == 404){
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".weather").style.display = "none";
+    }else{
+        var data = await response.json();
 
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
@@ -71,6 +77,10 @@ async function checkWeather(city) {
     else if(data.weather[0].main == "Mist"){
         weatherIcon.src = "images/mist.png";
     }
+
+    document.querySelector(".weather").style.display ="block";
+    document.querySelector(".error").style.display ="none";
+    }
 }
 
 searchBtn.addEventListener("click", ()=>{
@@ -78,7 +88,6 @@ searchBtn.addEventListener("click", ()=>{
 })
 
 </script>
-
 
     </body>
 </html>
